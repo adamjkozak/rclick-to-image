@@ -34,6 +34,7 @@ async function generateImageFromSelection(tab) {
       body: JSON.stringify({prompt, n: 1, size})
     });
     const data = await resp.json();
+
     if (!resp.ok) {
       throw new Error(data.error?.message || 'Failed to generate image');
     }
@@ -41,15 +42,19 @@ async function generateImageFromSelection(tab) {
     if (!url) {
       throw new Error('Image URL missing in response');
     }
+
+    const url = data.data[0].url;
     chrome.downloads.download({url, filename: 'generated.png', saveAs: false});
     chrome.windows.create({url});
   } catch (e) {
     console.error(e);
+
     chrome.scripting.executeScript({
       target: {tabId: tab.id},
       func: msg => alert(msg),
       args: ["Error generating image: " + e.message]
     });
+
   }
 }
 

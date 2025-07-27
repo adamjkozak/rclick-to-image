@@ -11,6 +11,7 @@ to your Downloads folder.
 - Choose image size and style in settings.
 - Errors are shown as popup alerts when generation fails.
 
+
 ## Installing
 
 1. Open `chrome://extensions` and enable **Developer mode**.
