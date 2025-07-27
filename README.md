@@ -9,6 +9,8 @@ to your Downloads folder.
 - Highlight text and use the context menu or the extension button to generate an image.
 - OpenAI API key stored via the options page.
 - Choose image size and style in settings.
+- Errors are shown as popup alerts when generation fails.
+
 
 ## Installing
 
