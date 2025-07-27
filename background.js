@@ -45,7 +45,8 @@ async function generateImageFromSelection(tab) {
         n: 1,
         size,
         model: 'gpt-image-1',
-        quality
+        quality,
+        response_format: 'url'
       })
     });
     const data = await resp.json();
@@ -61,6 +62,12 @@ async function generateImageFromSelection(tab) {
         url = img;
       } else if (img && typeof img.url === 'string') {
         url = img.url;
+      }
+    }
+    if (!url) {
+      const b64 = data.data?.[0]?.b64_json;
+      if (b64) {
+        url = `data:image/png;base64,${b64}`;
       }
     }
     if (!url) {
