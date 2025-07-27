@@ -45,7 +45,8 @@ async function generateImageFromSelection(tab) {
         n: 1,
         size,
         model: 'gpt-image-1',
-        quality
+        quality,
+        response_format: 'url'
       })
     });
     const data = await resp.json();
@@ -53,7 +54,16 @@ async function generateImageFromSelection(tab) {
     if (!resp.ok) {
       throw new Error(data.error?.message || 'Failed to generate image');
     }
-    const url = data.data?.[0]?.url;
+    let url = data.data?.[0]?.url;
+    if (!url) {
+      // Handle newer response format with image_url field
+      const img = data.data?.[0]?.image_url;
+      if (typeof img === 'string') {
+        url = img;
+      } else if (img && typeof img.url === 'string') {
+        url = img.url;
+      }
+    }
     if (!url) {
       throw new Error('Image URL missing in response');
     }
