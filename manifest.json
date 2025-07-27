@@ -1,0 +1,22 @@
+{
+  "manifest_version": 3,
+  "name": "Right Click to Image",
+  "description": "Generate images from selected text via OpenAI DALL-E",
+  "version": "1.0",
+  "permissions": [
+    "contextMenus",
+    "activeTab",
+    "storage",
+    "downloads"
+  ],
+  "host_permissions": [
+    "https://api.openai.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_title": "Generate Image"
+  },
+  "options_page": "options.html"
+}
