@@ -24,7 +24,7 @@ async function generateImageFromSelection(tab) {
   }
   const prompt = opts.stylePrompt ? `${text}, ${opts.stylePrompt}` : text;
   const size = opts.size || '1024x1024';
-  const quality = opts.quality || 'standard';
+  const quality = opts.quality || 'auto';
   let progressWin;
   try {
     progressWin = await chrome.windows.create({
