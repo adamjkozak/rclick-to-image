@@ -8,7 +8,7 @@ saved automatically to your Downloads folder.
 
 - Highlight text and use the context menu or the extension button to generate an image.
 - OpenAI API key stored via the options page.
-- Choose image size, quality and OpenAI style in settings.
+- Choose image size and quality in settings.
 - Append custom style text to the prompt.
 - Shows a progress window while the image is being generated.
 - Errors are shown as popup alerts when generation fails.

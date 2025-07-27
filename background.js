@@ -17,7 +17,7 @@ async function getSelectedText(tabId) {
 async function generateImageFromSelection(tab) {
   const text = await getSelectedText(tab.id);
   if (!text) return;
-  const opts = await chrome.storage.local.get(['apiKey', 'size', 'quality', 'openaiStyle', 'stylePrompt']);
+  const opts = await chrome.storage.local.get(['apiKey', 'size', 'quality', 'stylePrompt']);
   if (!opts.apiKey) {
     chrome.runtime.openOptionsPage();
     return;
@@ -25,7 +25,6 @@ async function generateImageFromSelection(tab) {
   const prompt = opts.stylePrompt ? `${text}, ${opts.stylePrompt}` : text;
   const size = opts.size || '1024x1024';
   const quality = opts.quality || 'standard';
-  const style = opts.openaiStyle || 'vivid';
   let progressWin;
   try {
     progressWin = await chrome.windows.create({
@@ -46,8 +45,7 @@ async function generateImageFromSelection(tab) {
         n: 1,
         size,
         model: 'gpt-image-1',
-        quality,
-        style
+        quality
       })
     });
     const data = await resp.json();
