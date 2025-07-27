@@ -73,7 +73,9 @@ async function generateImageFromSelection(tab) {
       throw new Error('Image URL missing in response');
     }
     chrome.downloads.download({url, filename: 'generated.png', saveAs: false});
-    chrome.windows.create({url});
+    const viewer = chrome.runtime.getURL('viewer.html') +
+                  '?url=' + encodeURIComponent(url);
+    chrome.windows.create({url: viewer});
     chrome.windows.remove(progressWin.id);
   } catch (e) {
     console.error(e);
