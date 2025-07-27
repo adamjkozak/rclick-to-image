@@ -23,15 +23,23 @@ async function generateImageFromSelection(tab) {
     return;
   }
   const prompt = opts.style ? `${text}, ${opts.style}` : text;
-  const size = opts.size || '512x512';
+  let size = opts.size || '1024x1024';
+  let progressWin;
   try {
+    progressWin = await chrome.windows.create({
+      url: chrome.runtime.getURL('progress.html'),
+      type: 'popup',
+      width: 400,
+      height: 200
+    });
+
     const resp = await fetch('https://api.openai.com/v1/images/generations', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${opts.apiKey}`
       },
-      body: JSON.stringify({prompt, n: 1, size})
+      body: JSON.stringify({prompt, n: 1, size, model: 'dall-e-3'})
     });
     const data = await resp.json();
 
@@ -44,6 +52,7 @@ async function generateImageFromSelection(tab) {
     }
     chrome.downloads.download({url, filename: 'generated.png', saveAs: false});
     chrome.windows.create({url});
+    chrome.windows.remove(progressWin.id);
   } catch (e) {
     console.error(e);
 
@@ -52,6 +61,11 @@ async function generateImageFromSelection(tab) {
       func: msg => alert(msg),
       args: ["Error generating image: " + e.message]
     });
+
+  } finally {
+    if (progressWin && progressWin.id) {
+      chrome.windows.remove(progressWin.id);
+    }
 
   }
 }
