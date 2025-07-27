@@ -1,14 +1,15 @@
 # Right Click to Image
 
-This Chrome extension sends highlighted text to OpenAI's image generation API and
-displays the resulting image in a new window. The image is saved automatically
-to your Downloads folder.
+This Chrome extension sends highlighted text to OpenAI's latest DALL-E 3 image
+generation API and displays the resulting image in a new window. The image is
+saved automatically to your Downloads folder.
 
 ## Features
 
 - Highlight text and use the context menu or the extension button to generate an image.
 - OpenAI API key stored via the options page.
 - Choose image size and style in settings.
+- Shows a progress window while the image is being generated.
 - Errors are shown as popup alerts when generation fails.
 
 
