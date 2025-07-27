@@ -1,6 +1,6 @@
 # Right Click to Image
 
-This Chrome extension sends highlighted text to OpenAI's GPT-Image-1 image
+This Chrome extension sends highlighted text to OpenAI's DALL-E 3 image
 generation API and displays the resulting image in a new window. The image is
 saved automatically to your Downloads folder.
 

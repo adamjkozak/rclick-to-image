@@ -45,7 +45,7 @@ async function generateImageFromSelection(tab) {
         prompt,
         n: 1,
         size,
-        model: 'gpt-image-1',
+        model: 'dall-e-3',
         quality,
         style
       })
