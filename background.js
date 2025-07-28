@@ -14,15 +14,48 @@ async function getSelectedText(tabId) {
   return result;
 }
 
+async function callLLM(apiKey, text) {
+  const resp = await fetch('https://api.openai.com/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${apiKey}`
+    },
+    body: JSON.stringify({
+      model: 'gpt-4o',
+      messages: [
+        {
+          role: 'system',
+          content: 'Rewrite the provided text into a concise image generation prompt that accentuates descriptive adjectives and adds professional stylistic modifiers.'
+        },
+        { role: 'user', content: text }
+      ]
+    })
+  });
+  const data = await resp.json();
+  if (!resp.ok) {
+    throw new Error(data.error?.message || 'Failed to enhance prompt');
+  }
+  return data.choices?.[0]?.message?.content?.trim() || text;
+}
+
 async function generateImageFromSelection(tab) {
   const text = await getSelectedText(tab.id);
   if (!text) return;
-  const opts = await chrome.storage.local.get(['apiKey', 'size', 'quality', 'stylePrompt']);
+  const opts = await chrome.storage.local.get(['apiKey', 'size', 'quality', 'stylePrompt', 'useLLM']);
   if (!opts.apiKey) {
     chrome.runtime.openOptionsPage();
     return;
   }
-  const prompt = opts.stylePrompt ? `${text}, ${opts.stylePrompt}` : text;
+  let basePrompt = text;
+  if (opts.useLLM) {
+    try {
+      basePrompt = await callLLM(opts.apiKey, text);
+    } catch (e) {
+      console.error(e);
+    }
+  }
+  const prompt = opts.stylePrompt ? `${basePrompt}, ${opts.stylePrompt}` : basePrompt;
   const size = opts.size || '1024x1024';
   const quality = opts.quality || 'auto';
   let progressWin;

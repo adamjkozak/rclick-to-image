@@ -10,6 +10,7 @@ saved automatically to your Downloads folder.
 - OpenAI API key stored via the options page.
 - Choose image size and quality (auto/high/medium/low) in settings.
 - Append custom style text to the prompt.
+- Optionally enhance the selected text with GPT-4.1 mini to create a polished prompt.
 - Shows a progress window while the image is being generated.
 - Errors are shown as popup alerts when generation fails.
 
