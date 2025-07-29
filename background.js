@@ -4,6 +4,11 @@ chrome.runtime.onInstalled.addListener(() => {
     title: 'Generate image from selection',
     contexts: ['selection']
   });
+  chrome.contextMenus.create({
+    id: 'view-history',
+    title: 'View image history',
+    contexts: ['all']
+  });
 });
 
 async function getSelectedText(tabId) {
@@ -42,7 +47,16 @@ async function callLLM(apiKey, text) {
 async function generateImageFromSelection(tab) {
   const text = await getSelectedText(tab.id);
   if (!text) return;
-  const opts = await chrome.storage.local.get(['apiKey', 'size', 'quality', 'stylePrompt', 'useLLM']);
+  const opts = await chrome.storage.local.get([
+    'apiKey',
+    'size',
+    'quality',
+    'stylePrompt',
+    'useLLM',
+    'numImages',
+    'filenamePrefix',
+    'historySize'
+  ]);
   if (!opts.apiKey) {
     chrome.runtime.openOptionsPage();
     return;
@@ -75,7 +89,7 @@ async function generateImageFromSelection(tab) {
       },
       body: JSON.stringify({
         prompt,
-        n: 1,
+        n: parseInt(opts.numImages, 10) || 1,
         size,
         model: 'gpt-image-1',
         quality
@@ -86,30 +100,44 @@ async function generateImageFromSelection(tab) {
     if (!resp.ok) {
       throw new Error(data.error?.message || 'Failed to generate image');
     }
-    let url = data.data?.[0]?.url;
-    if (!url) {
-      // Handle newer response format with image_url field
-      const img = data.data?.[0]?.image_url;
-      if (typeof img === 'string') {
-        url = img;
-      } else if (img && typeof img.url === 'string') {
-        url = img.url;
+    const extractUrl = item => {
+      let u = item?.url;
+      if (!u) {
+        const img = item?.image_url;
+        if (typeof img === 'string') {
+          u = img;
+        } else if (img && typeof img.url === 'string') {
+          u = img.url;
+        }
       }
-    }
-    if (!url) {
-      const b64 = data.data?.[0]?.b64_json;
-      if (b64) {
-        url = `data:image/png;base64,${b64}`;
+      if (!u && item?.b64_json) {
+        u = `data:image/png;base64,${item.b64_json}`;
       }
-    }
-    if (!url) {
+      return u;
+    };
+    const urls = (data.data || [])
+      .map(extractUrl)
+      .filter(Boolean);
+    if (!urls.length) {
       throw new Error('Image URL missing in response');
     }
-    chrome.downloads.download({url, filename: 'generated.png', saveAs: false});
+    const timestamp = Date.now();
+    urls.forEach((u, i) => {
+      const fname = `${opts.filenamePrefix || 'generated'}-${i + 1}-${timestamp}.png`;
+      chrome.downloads.download({url: u, filename: fname, saveAs: false});
+    });
+    // store history
+    try {
+      const {history = [], historySize = 20} = await chrome.storage.local.get(['history', 'historySize']);
+      history.unshift({prompt, urls, time: timestamp});
+      while (history.length > parseInt(historySize, 10)) history.pop();
+      await chrome.storage.local.set({history});
+    } catch (e) {
+      console.error('Failed to save history', e);
+    }
     const viewer = chrome.runtime.getURL('viewer.html') +
-                  '?url=' + encodeURIComponent(url);
+                  '?urls=' + encodeURIComponent(JSON.stringify(urls));
     chrome.windows.create({url: viewer});
-    chrome.windows.remove(progressWin.id);
   } catch (e) {
     console.error(e);
 
@@ -130,6 +158,8 @@ async function generateImageFromSelection(tab) {
 chrome.contextMenus.onClicked.addListener((info, tab) => {
   if (info.menuItemId === 'generate') {
     generateImageFromSelection(tab);
+  } else if (info.menuItemId === 'view-history') {
+    chrome.tabs.create({url: chrome.runtime.getURL('history.html')});
   }
 });
 
