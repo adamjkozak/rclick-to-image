@@ -11,6 +11,11 @@ saved automatically to your Downloads folder.
 - Choose image size and quality (auto/high/medium/low) in settings.
 - Append custom style text to the prompt.
 - Optionally enhance the selected text with GPT-4.1 mini to create a polished prompt.
+- Generate multiple images at once and view them in a simple gallery.
+- Customize the downloaded file names with a user-defined prefix.
+- Keep a history of generated images and view them from the extension.
+- Click any image in the viewer or history to copy its URL to the clipboard.
+- Configure how many history entries are kept via the History Size option.
 - Shows a progress window while the image is being generated.
 - Errors are shown as popup alerts when generation fails.
 
@@ -26,3 +31,8 @@ saved automatically to your Downloads folder.
 Select text on any web page and either right click and choose
 "Generate image from selection" or click the extension icon. A new window will
 open with the generated image, which is also downloaded automatically.
+Use the "View image history" context menu item or the **View History** button on
+the options page to see previously generated images. Click any thumbnail to copy
+its URL to the clipboard.
+You can adjust how many entries are kept by changing the **History Size** value
+in the options page.

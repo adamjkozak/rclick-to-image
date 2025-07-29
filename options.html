@@ -25,10 +25,20 @@
   <label>Additional Style Text:
     <input id="stylePrompt" type="text" placeholder="e.g. cartoon, photorealistic">
   </label><br>
+  <label>Number of Images:
+    <input id="numImages" type="number" min="1" max="10" value="1">
+  </label><br>
+  <label>Filename Prefix:
+    <input id="filenamePrefix" type="text" value="generated">
+  </label><br>
+  <label>History Size:
+    <input id="historySize" type="number" min="1" max="100" value="20">
+  </label><br>
   <label>
     <input id="useLLM" type="checkbox"> Enhance prompt with GPT-4.1 mini
   </label><br>
   <button id="save">Save</button>
+  <button id="viewHistory">View History</button>
   <div id="status"></div>
   <script src="options.js"></script>
 </body>

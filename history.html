@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Image History</title>
+  <style>
+    body { font-family: sans-serif; margin: 10px; }
+    .entry { margin-bottom: 20px; }
+    .entry h3 { margin: 0 0 5px 0; }
+    .images { display: flex; flex-wrap: wrap; gap: 10px; }
+    .images img { max-width: 150px; cursor: pointer; border: 1px solid #ccc; }
+    button { margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <h1>Generated Image History</h1>
+  <button id="clear">Clear History</button>
+  <div id="history"></div>
+  <script src="history.js"></script>
+</body>
+</html>
